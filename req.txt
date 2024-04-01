@@ -1,0 +1,13 @@
+PyMySQL==1.1.0
+python-decouple==3.8
+google-cloud-storage
+git+https://github.com/openai/whisper.git
+moviepy
+langchain
+langchain-community
+openai
+chromadb
+djangorestframework
+transformers
+
+
