@@ -7,10 +7,6 @@ NAME = config('DB_NAME')
 USER = config('DB_USER')
 PASS = config('DB_PASS')
 
-print(USER)
-print(NAME)
-print(USER)
-print(PASS)
 
 def get_id_from_embed_code(class_id):
     try:
@@ -19,7 +15,7 @@ def get_id_from_embed_code(class_id):
         cursor = conn.cursor()
         cursor.execute(q)
         row = cursor.fetchall()
-        print(row)
+        conn.close()
         return extract_id(row[0][0])
 
     except pymysql.MySQLError as err:
