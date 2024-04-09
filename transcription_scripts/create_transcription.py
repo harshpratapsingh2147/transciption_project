@@ -22,7 +22,7 @@ def load_audio_file(class_id):
 
 
 def decode_audio_file(audio):
-    model = whisper.load_model("medium.en")
+    model = whisper.load_model("base.en")
     result = model.transcribe(audio)
     return result
 
