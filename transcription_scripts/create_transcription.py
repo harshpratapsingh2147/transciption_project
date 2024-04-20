@@ -2,6 +2,7 @@ import whisper
 from whisper.utils import get_writer
 from moviepy.editor import *
 from decouple import config
+from fetch_synopsis import get_synopsis_from_db
 
 BASE_DOWNLOAD_VIDEO_PATH = config('BASE_DOWNLOAD_VIDEO_PATH')
 BASE_AUDIO_PATH = config('BASE_AUDIO_PATH')
@@ -22,7 +23,7 @@ def load_audio_file(class_id):
 
 
 def decode_audio_file(audio):
-    model = whisper.load_model("base.en")
+    model = whisper.load_model("medium.en")
     result = model.transcribe(audio)
     return result
 
@@ -30,10 +31,11 @@ def decode_audio_file(audio):
 def write_transcription_file(transcript_text, class_id):
     # Specify the file path where you want to save the text file
     text_file_path = f"{BASE_TRANSCRIPT_PATH}{class_id}_transcript.txt"
-
+    synopsis = get_synopsis_from_db(class_id=class_id)
+    final_transcript_text = transcript_text + "\n" + "Synopsis:" + synopsis
     # Write the transcription string to the text file
     with open(text_file_path, "w", encoding="utf-8") as file:
-        file.write(transcript_text)
+        file.write(final_transcript_text)
 
 
 def write_srt_file(transcript, class_id):
