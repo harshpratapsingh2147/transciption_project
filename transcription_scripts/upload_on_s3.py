@@ -19,7 +19,7 @@ def upload_transcript_subtitle_to_s3(class_id):
         subtitle_file_name = f"{class_id}_sub.srt"
         local_transcript_file_path = f"{BASE_TRANSCRIPT_PATH}/{transcript_file_name}"
         local_subtitle_file_path = f"{BASE_SUBTITLE_PATH}/{subtitle_file_name}"
-        s3_client.upload_file(local_transcript_file_path, S3_BUCKET, f"transcripts/{transcript_file_name}")
-        s3_client.upload_file(local_subtitle_file_path, S3_BUCKET, f"subtitles/{subtitle_file_name}")
+        s3_client.upload_file(local_transcript_file_path, S3_BUCKET, f"ai_live_query_resolution/transcripts/{transcript_file_name}")
+        s3_client.upload_file(local_subtitle_file_path, S3_BUCKET, f"ai_live_query_resolution/subtitles/{subtitle_file_name}")
     except Exception as err:
         print(err)
