@@ -31,11 +31,14 @@ def recursive_text_splitter(pages):
 
 
 def embed_data(docs):
-    client = chromadb.HttpClient(host='localhost', port=8000)
-    embedding = OpenAIEmbeddings(api_key=api_key)
-    vectordb = Chroma.from_documents(
-        client=client,
-        documents=docs,
-        embedding=embedding,
-    )
-    return vectordb
+    try:
+        client = chromadb.HttpClient(host='localhost', port=8000)
+        embedding = OpenAIEmbeddings(api_key=api_key)
+        vectordb = Chroma.from_documents(
+            client=client,
+            documents=docs,
+            embedding=embedding,
+        )
+        return vectordb
+    except Exception as err:
+        print("Here is the issue: ", err)
