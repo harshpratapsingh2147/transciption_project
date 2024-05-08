@@ -12,15 +12,20 @@ GCP_DIRECTORY = config('GCP_DIRECTORY')
 
 
 def download_file(signed_url, class_id):
-    response = requests.get(signed_url, stream=True)
+    try:
+        response = requests.get(signed_url, stream=True)
 
-    download_file_path = f"{BASE_DOWNLOAD_PATH}{class_id}.mp4"
-    with open(download_file_path, "wb") as file:
-        for chunk in response.iter_content(chunk_size=1024):
-            if chunk:
-                file.write(chunk)
+        download_file_path = f"{BASE_DOWNLOAD_PATH}{class_id}.mp4"
+        with open(download_file_path, "wb") as file:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    file.write(chunk)
 
-    print("Video downloaded successfully!")
+        print("Video downloaded successfully!")
+        return True
+    except Exception as err:
+        print(err)
+        return False
 
 
 def list_files_in_directory(bucket, directory_path):

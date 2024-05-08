@@ -39,6 +39,7 @@ def embed_data(docs):
             documents=docs,
             embedding=embedding,
         )
-        return vectordb
+        return True
     except Exception as err:
         print("Here is the issue: ", err)
+        return False
