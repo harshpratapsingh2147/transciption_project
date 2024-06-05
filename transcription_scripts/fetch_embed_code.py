@@ -24,7 +24,7 @@ def get_id_from_embed_code(class_id):
 
 def extract_id(embed_code):
     # Define a regular expression pattern to extract the ID
-    pattern = r'id=(\d+)'
+    pattern = r'id=([\w]+)'
     match = re.search(pattern, embed_code)
 
     if match:
