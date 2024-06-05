@@ -72,7 +72,7 @@ def get_signed_url(embed_code_id):
             return signed_url
 
         else:
-            file_name = f"{GCP_DIRECTORY}{embed_code_id}/240p.mp4"
+            file_name = f"{GCP_DIRECTORY}{embed_code_id}/360p.mp4"
             blob = bucket.blob(file_name)
 
             # Generate signed URL with expiration time (in this case, 1 hour from now)
