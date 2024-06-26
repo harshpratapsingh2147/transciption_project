@@ -66,8 +66,8 @@ class FileOperations:
         items = os.listdir(directory_path)
 
         # Filter out only the files
-        files = [item for item in items if os.path.isfile(os.path.join(directory_path, item))]
-
+        files = sorted([item for item in items if os.path.isfile(os.path.join(directory_path, item))])
+        print(files)
         return files
 
     def write_transcript_to_file(self, content, class_id, file_name):
