@@ -54,7 +54,7 @@ def embed_data(docs):
             metadatas.append(doc.metadata)
             documents.append(doc.page_content)
         embedding = CustomOpenAIEmbeddings(openai_api_key=api_key)
-        collection = client.get_or_create_collection(name="live_query9", embedding_function=embedding)
+        collection = client.get_or_create_collection(name="live_query", embedding_function=embedding)
         collection.add(
             ids=ids, metadatas=metadatas, documents=documents
         )
