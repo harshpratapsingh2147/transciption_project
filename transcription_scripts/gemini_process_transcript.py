@@ -67,6 +67,8 @@ def process(class_id):
 
         synopsis = db_ops.get_synopsis_from_db(class_id=class_id)
         file_name = f"{class_id}_gemini_transcript_improved.txt"
+        print("here is the synopsis....................")
+        print(synopsis)
         file_ops.write_transcript_to_file(
             content=f"\n Synopsis: \n {synopsis}",
             class_id=class_id,

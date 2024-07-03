@@ -72,7 +72,10 @@ class FileOperations:
 
     def write_transcript_to_file(self, content, class_id, file_name):
         output_folder = f"{self.base_transcript_path}{class_id}/"
+        print("here is the output folder..........")
+        print(output_folder)
         os.makedirs(output_folder, exist_ok=True)
+        print(file_name)
         with open(output_folder + f"{file_name}", "a") as file:
             file.write(content)
 
