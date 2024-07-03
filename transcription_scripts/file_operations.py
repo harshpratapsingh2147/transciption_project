@@ -87,7 +87,7 @@ class FileOperations:
         os.remove(f"{self.base_download_video_path}{class_id}.mp4")
         os.remove(f"{self.base_audio_path}{class_id}.mp3")
         # os.remove(f"{self.base_subtitle_path}{class_id}_sub.srt")
-        shutil.rmtree(f"{self.base_transcript_path}{class_id}")
+        # shutil.rmtree(f"{self.base_transcript_path}{class_id}")
         shutil.rmtree(f"{self.base_cut_transcript_path}{class_id}")
         shutil.rmtree(f"{self.base_cut_audio_folder_path}{class_id}")
 
