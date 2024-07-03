@@ -86,6 +86,7 @@ class FileOperations:
         # os.remove(f"{self.base_subtitle_path}{class_id}_sub.srt")
         shutil.rmtree(f"{self.base_transcript_path}{class_id}")
         shutil.rmtree(f"{self.base_cut_transcript_path}{class_id}")
+        shutil.rmtree(f"{self.base_cut_audio_folder_path}{class_id}")
 
     def read_file(self, file_path):
         with open(file_path, "r") as file:

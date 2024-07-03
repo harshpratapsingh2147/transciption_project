@@ -10,31 +10,40 @@ class DBOperations:
         self.name = config('DB_NAME')
         self.user = config('DB_USER')
         self.password = config('DB_PASS')
-        self.conn = pymysql.connect(
+
+    def update_transcription_status(self, class_id):
+        try:
+            conn = pymysql.connect(
                 host=self.host,
                 user=self.user,
                 passwd=self.password,
                 db=self.name,
                 connect_timeout=5
             )
-
-    def update_transcription_status(self, class_id):
-        try:
             q = "UPDATE classroom_lecture SET transcription_status = %s WHERE id = %s" % (1, class_id)
-            curr = self.conn.cursor()
+            curr = conn.cursor()
             curr.execute(q)
-            self.conn.commit()
-            self.conn.close()
+            conn.commit()
+            conn.close()
         except pymysql.MySQLError as err:
-            print(err)
+            print("Here is the problem in pymysql........", err)
+        except Exception as err:
+            print("some other error...........", err)
 
     def get_id_from_embed_code(self, class_id):
         try:
+            conn = pymysql.connect(
+                host=self.host,
+                user=self.user,
+                passwd=self.password,
+                db=self.name,
+                connect_timeout=5
+            )
             q = "Select embed_code from classroom_lecture where id='%s'" % class_id
-            cursor = self.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(q)
             row = cursor.fetchall()
-            self.conn.close()
+            conn.close()
             return extract_id(row[0][0])
 
         except pymysql.MySQLError as err:
@@ -42,11 +51,18 @@ class DBOperations:
 
     def get_synopsis_from_db(self, class_id):
         try:
+            conn = pymysql.connect(
+                host=self.host,
+                user=self.user,
+                passwd=self.password,
+                db=self.name,
+                connect_timeout=5
+            )
             q = "Select content from classroom_lecture where id='%s'" % class_id
-            cursor = self.conn.cursor()
+            cursor = conn.cursor()
             cursor.execute(q)
             row = cursor.fetchall()
-            self.conn.close()
+            conn.close()
             return parse_synopsis(row[0][0])
 
         except pymysql.MySQLError as err:

@@ -63,6 +63,16 @@ def process(class_id):
 
         print("\n--------------------improve the transcription using gpt-----------------------------\n")
         gpt_api(class_id=class_id)
+        print("\n--------------------add the synopsis-----------------------------\n")
+
+        synopsis = db_ops.get_synopsis_from_db(class_id=class_id)
+        file_name = f"{class_id}_gemini_transcript_improved.txt"
+        file_ops.write_transcript_to_file(
+            content=f"\n Synopsis: \n {synopsis}",
+            class_id=class_id,
+            file_name=file_name
+        )
+
         print("\n--------------------load and split the content from the transcript-----------------------------\n")
 
         pages = file_ops.load_text_file(class_id=class_id)
