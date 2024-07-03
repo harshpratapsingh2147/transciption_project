@@ -72,8 +72,6 @@ class FileOperations:
 
     def write_transcript_to_file(self, content, class_id, file_name):
         output_folder = f"{self.base_transcript_path}{class_id}/"
-        print("here is the output folder..........")
-        print(output_folder)
         os.makedirs(output_folder, exist_ok=True)
         print(file_name)
         with open(output_folder + f"{file_name}", "a") as file:
@@ -87,7 +85,7 @@ class FileOperations:
         os.remove(f"{self.base_download_video_path}{class_id}.mp4")
         os.remove(f"{self.base_audio_path}{class_id}.mp3")
         # os.remove(f"{self.base_subtitle_path}{class_id}_sub.srt")
-        # shutil.rmtree(f"{self.base_transcript_path}{class_id}")
+        shutil.rmtree(f"{self.base_transcript_path}{class_id}")
         shutil.rmtree(f"{self.base_cut_transcript_path}{class_id}")
         shutil.rmtree(f"{self.base_cut_audio_folder_path}{class_id}")
 
