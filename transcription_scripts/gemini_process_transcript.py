@@ -1,4 +1,5 @@
 from vertexai.generative_models import GenerativeModel, Part
+from vertexai import generative_models
 from moviepy.editor import *
 from db_operations import DBOperations
 from download_video import *
@@ -9,30 +10,61 @@ from upload_on_s3 import *
 
 
 def generate_gemini_content(audio):
-    vertex_model = "gemini-1.5-pro-preview-0409"
-    model = GenerativeModel(model_name=vertex_model)
-    prompt = '''
-            <instructions>
-            You are given an audio file. It contains a lecture.
-            It can be in any hindi or english or in both. 
-            1. Use only english to write the transcription.
-            2. Follow proper punctuation in the conversation and never miss/misspell or add any word/text during the transcription.
-            3. Don't mention the time in the transcription. only output the texts.
-            </instructions>
-        '''
-    response = model.generate_content(
-        [
-            Part.from_data(
-                audio,
-                mime_type="audio/mp3",
-            ),
-            prompt,
-        ]
-    )
+    try:
+        vertex_model = "gemini-1.5-pro-preview-0409"
+        model = GenerativeModel(model_name=vertex_model)
+        prompt = '''
+                <instructions>
+                You are given an audio file. It contains a lecture.
+                It can be in any hindi or english or in both. 
+                1. Use only english to write the transcription.
+                2. Follow proper punctuation in the conversation and never miss/misspell or add any word/text during the transcription.
+                3. Don't mention the time in the transcription. only output the texts.
+                </instructions>
+            '''
 
-    print(response.text)
-    print(response)
-    return response
+        # generation_config = generative_models.GenerationConfig(temperature=0)
+        # Safety config
+        safety_config = [
+            generative_models.SafetySetting(
+                category=generative_models.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                threshold=generative_models.HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            ),
+            generative_models.SafetySetting(
+                category=generative_models.HarmCategory.HARM_CATEGORY_HARASSMENT,
+                threshold=generative_models.HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            ),
+            generative_models.SafetySetting(
+                category=generative_models.HarmCategory.HARM_CATEGORY_UNSPECIFIED,
+                threshold=generative_models.HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            ),
+            generative_models.SafetySetting(
+                category=generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                threshold=generative_models.HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            ),
+            generative_models.SafetySetting(
+                category=generative_models.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                threshold=generative_models.HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            ),
+
+        ]
+
+        response = model.generate_content(
+            [
+                Part.from_data(
+                    audio,
+                    mime_type="audio/mp3",
+                ),
+                prompt,
+            ],
+            safety_settings=safety_config
+        )
+
+        # print(response.text)
+        # print(response)
+        return response
+    except Exception as err:
+        print(f"Gemini error: {err}")
 
 
 def process(class_id):
