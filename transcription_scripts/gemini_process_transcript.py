@@ -6,7 +6,7 @@ from download_video import *
 from gpt_improvement import *
 from utility import *
 from file_operations import FileOperations
-from upload_on_s3 import *
+from s3_manager import *
 
 
 def generate_gemini_content(audio):
@@ -116,7 +116,8 @@ def process(class_id):
             print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
             db_ops.update_transcription_status(class_id=class_id)
             print(f"\n-----------------uploading files on s3 for {class_id}---------------------\n")
-            upload_transcript_subtitle_to_s3(class_id=class_id)
+            s3_manager = S3Manager()
+            s3_manager.upload_transcript_subtitle_to_s3(class_id=class_id)
             print(f"\n-----------------deleting files from local for {class_id}---------------------\n")
             file_ops.delete_files_from_local(class_id=class_id)
             print(f"\n-----------------transcription for the video {class_id} completed.---------------------\n")

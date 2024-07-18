@@ -29,8 +29,11 @@ def parse_synopsis(html_content):
 
 
 def recursive_text_splitter(pages):
-    chunk_size = 1500
-    chunk_overlap = 100
+    page = pages[0]
+    page.page_content = page.page_content.replace("\n", " ")
+    page.page_content = page.page_content.replace("\t", " ")
+    chunk_size = 2000
+    chunk_overlap = 500
 
     r_splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
