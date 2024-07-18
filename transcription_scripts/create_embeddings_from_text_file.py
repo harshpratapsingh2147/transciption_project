@@ -14,8 +14,8 @@ def handler():
     try:
         s3_manager = S3Manager()
         list_of_files = s3_manager.get_all_objects(prefix=S3_DOWNLOAD_PREFIX)
-
-        for file in list_of_files[1:3]:
+        print(list_of_files)
+        for file in list_of_files[1:]:
             file_name = file.split("/")[-1]
             class_id = file_name.split("_")[0]
             print(class_id)
