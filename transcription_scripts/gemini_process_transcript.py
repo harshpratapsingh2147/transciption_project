@@ -70,16 +70,18 @@ def generate_gemini_content(audio):
 def process(class_id):
 
     db_ops = DBOperations()
-    embed_code_id = db_ops.get_id_from_embed_code(class_id=class_id)
-    signed_url = get_signed_url(embed_code_id=embed_code_id)
+    # embed_code_id = db_ops.get_id_from_embed_code(class_id=class_id)
+    # signed_url = get_signed_url(embed_code_id=embed_code_id)
 
-    if not signed_url:
+    # if not signed_url:
+    if not True:
         print("No videos exist on GCP for the given class id")
     else:
         file_ops = FileOperations()
 
-        print("\n--------------------download video file from gcp to local-----------------------------\n")
-        if download_file(class_id=class_id, signed_url=signed_url):
+        # print("\n--------------------download video file from gcp to local-----------------------------\n")
+        # if download_file(class_id=class_id, signed_url=signed_url):
+        if True:
 
             print("\n--------------------convert the mp4 file to mp3-----------------------------\n")
             file_ops = FileOperations()
