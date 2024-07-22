@@ -1,6 +1,7 @@
 from s3_manager import *
 from decouple import config
 from langchain.document_loaders import TextLoader
+from db_operations import *
 from utility import *
 import os
 import shutil
@@ -30,6 +31,9 @@ def handler():
             docs = recursive_text_splitter(pages)
             print(f"embedding splits for {file_name}.....")
             if embed_data(docs):
+                print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
+                db_ops = DBOperations()
+                db_ops.update_transcription_status(class_id=class_id)
                 print("embedding completed............deleting file from local")
                 shutil.rmtree(f"{BASE_TRANSCRIPT_PATH}")
     except Exception as err:

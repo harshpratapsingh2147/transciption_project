@@ -44,5 +44,7 @@ def gpt_api(class_id, prompt=PROMPT):
                 class_id=class_id,
                 file_name=file_name
             )
+            return True
     except Exception as err:
         print(f"error in gpt api: {err}")
+        return False

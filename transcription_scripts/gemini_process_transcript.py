@@ -96,23 +96,23 @@ def process(class_id):
                 file_ops.write_cut_transcription_file(response.text, class_id, int(output_part))
 
         print("\n--------------------improve the transcription using gpt-----------------------------\n")
-        gpt_api(class_id=class_id)
-        print("\n--------------------add the synopsis-----------------------------\n")
+        if gpt_api(class_id=class_id):
+            print("\n--------------------add the synopsis-----------------------------\n")
 
-        synopsis = db_ops.get_synopsis_from_db(class_id=class_id)
-        file_name = f"{class_id}_gemini_transcript_improved.txt"
+            synopsis = db_ops.get_synopsis_from_db(class_id=class_id)
+            file_name = f"{class_id}_gemini_transcript_improved.txt"
 
-        file_ops.write_transcript_to_file(
-            content=f"\n Synopsis: \n {synopsis}",
-            class_id=class_id,
-            file_name=file_name
-        )
+            file_ops.write_transcript_to_file(
+                content=f"\n Synopsis: \n {synopsis}",
+                class_id=class_id,
+                file_name=file_name
+            )
 
-        s3_manager = S3Manager()
-        s3_manager.upload_transcript_subtitle_to_s3(class_id=class_id)
-        print(f"\n-----------------deleting files from local for {class_id}---------------------\n")
-        file_ops.delete_files_from_local(class_id=class_id)
-        print(f"\n-----------------transcription for the video {class_id} completed.---------------------\n")
+            s3_manager = S3Manager()
+            s3_manager.upload_transcript_subtitle_to_s3(class_id=class_id)
+            print(f"\n-----------------deleting files from local for {class_id}---------------------\n")
+            file_ops.delete_files_from_local(class_id=class_id)
+            print(f"\n-----------------transcription for the video {class_id} completed.---------------------\n")
 
         # print("\n--------------------load and split the content from the transcript-----------------------------\n")
         #
