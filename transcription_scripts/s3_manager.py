@@ -22,9 +22,9 @@ class S3Manager:
             local_transcript_file_path = f"{self.base_transcript_path}{class_id}/{transcript_file_name}"
             improved_local_transcript_file_path = f"{self.base_transcript_path}{class_id}/{improved_transcript_file_name}"
             self.s3_client.upload_file(local_transcript_file_path, self.s3_bucket,
-                                       f"ai_live_query_resolution/vdo_cipher/gemini_transcripts/{transcript_file_name}")
+                                       f"ai_live_query_resolution/gemini_transcripts/{transcript_file_name}")
             self.s3_client.upload_file(improved_local_transcript_file_path, self.s3_bucket,
-                                       f"ai_live_query_resolution/vdo_cipher/gemini_improved_transcripts/{improved_transcript_file_name}")
+                                       f"ai_live_query_resolution/gemini_improved_transcripts/{improved_transcript_file_name}")
 
         except Exception as err:
             print(err)

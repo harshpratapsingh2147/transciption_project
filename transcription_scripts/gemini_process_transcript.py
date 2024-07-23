@@ -70,18 +70,16 @@ def generate_gemini_content(audio):
 def process(class_id):
 
     db_ops = DBOperations()
-    # embed_code_id = db_ops.get_id_from_embed_code(class_id=class_id)
-    # signed_url = get_signed_url(embed_code_id=embed_code_id)
+    embed_code_id = db_ops.get_id_from_embed_code(class_id=class_id)
+    signed_url = get_signed_url(embed_code_id=embed_code_id)
 
-    # if not signed_url:
-    if not True:
+    if not signed_url:
         print("No videos exist on GCP for the given class id")
     else:
         file_ops = FileOperations()
 
-        # print("\n--------------------download video file from gcp to local-----------------------------\n")
-        # if download_file(class_id=class_id, signed_url=signed_url):
-        if True:
+        print("\n--------------------download video file from gcp to local-----------------------------\n")
+        if download_file(class_id=class_id, signed_url=signed_url):
 
             print("\n--------------------convert the mp4 file to mp3-----------------------------\n")
             file_ops = FileOperations()
@@ -96,39 +94,30 @@ def process(class_id):
                 file_ops.write_cut_transcription_file(response.text, class_id, int(output_part))
 
         print("\n--------------------improve the transcription using gpt-----------------------------\n")
-        if gpt_api(class_id=class_id):
-            print("\n--------------------add the synopsis-----------------------------\n")
+        gpt_api(class_id=class_id)
+        print("\n--------------------add the synopsis-----------------------------\n")
 
-            synopsis = db_ops.get_synopsis_from_db(class_id=class_id)
-            file_name = f"{class_id}_gemini_transcript_improved.txt"
+        synopsis = db_ops.get_synopsis_from_db(class_id=class_id)
+        file_name = f"{class_id}_gemini_transcript_improved.txt"
 
-            file_ops.write_transcript_to_file(
-                content=f"\n Synopsis: \n {synopsis}",
-                class_id=class_id,
-                file_name=file_name
-            )
+        file_ops.write_transcript_to_file(
+            content=f"\n Synopsis: \n {synopsis}",
+            class_id=class_id,
+            file_name=file_name
+        )
 
+        print("\n--------------------load and split the content from the transcript-----------------------------\n")
+
+        pages = file_ops.load_text_file(class_id=class_id)
+        print(f"splitting transcription file {class_id}.....")
+        docs = recursive_text_splitter(pages)
+        print(f"embedding splits {class_id}.....")
+        if embed_data(docs):
+            print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
+            db_ops.update_transcription_status(class_id=class_id)
+            print(f"\n-----------------uploading files on s3 for {class_id}---------------------\n")
             s3_manager = S3Manager()
             s3_manager.upload_transcript_subtitle_to_s3(class_id=class_id)
             print(f"\n-----------------deleting files from local for {class_id}---------------------\n")
             file_ops.delete_files_from_local(class_id=class_id)
             print(f"\n-----------------transcription for the video {class_id} completed.---------------------\n")
-
-        # print("\n--------------------load and split the content from the transcript-----------------------------\n")
-        #
-        # pages = file_ops.load_text_file(class_id=class_id)
-        # print(f"splitting transcription file {class_id}.....")
-        # docs = recursive_text_splitter(pages)
-        # print(f"embedding splits {class_id}.....")
-
-        # if embed_data(docs):
-        #     print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
-        #     db_ops.update_transcription_status(class_id=class_id)
-        #     print(f"\n-----------------uploading files on s3 for {class_id}---------------------\n")
-        #     s3_manager = S3Manager()
-        #     s3_manager.upload_transcript_subtitle_to_s3(class_id=class_id)
-        #     print(f"\n-----------------deleting files from local for {class_id}---------------------\n")
-        #     file_ops.delete_files_from_local(class_id=class_id)
-        #     print(f"\n-----------------transcription for the video {class_id} completed.---------------------\n")
-
-

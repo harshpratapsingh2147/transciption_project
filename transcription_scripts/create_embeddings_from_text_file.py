@@ -35,7 +35,7 @@ def handler():
                 db_ops = DBOperations()
                 db_ops.update_transcription_status(class_id=class_id)
                 print("embedding completed............deleting file from local")
-                shutil.rmtree(f"{BASE_TRANSCRIPT_PATH}")
+                shutil.rmtree(f"{BASE_TRANSCRIPT_PATH}{class_id}")
     except Exception as err:
         print(f"Here is the issue: {err}")
 
