@@ -65,7 +65,9 @@ def gpt_transcribe_audio(class_id):
     file_name = f"{class_id}_gemini_transcript_improved.txt"
 
     # Transcribe the audio
-    files = os.listdir(f"{BASE_CUT_AUDIO_FOLDER_PATH}{class_id}/")
+    files = file_ops.list_files_in_directory(
+        directory_path=f"{BASE_CUT_AUDIO_FOLDER_PATH}{class_id}/"
+    )
     for file in files:
         print(file)
         transcription = client.audio.transcriptions.create(
