@@ -1,17 +1,18 @@
 from vertexai.generative_models import GenerativeModel, Part
 from vertexai import generative_models
 from moviepy.editor import *
+from decouple import config
 from db_operations import DBOperations
-from download_video import *
-from gpt_improvement import *
-from utility import *
+from download_video import download_file, get_signed_url
+from gpt_utility import gpt_improve_transcript
+from utility import embed_data, recursive_text_splitter
 from file_operations import FileOperations
-from s3_manager import *
+from s3_manager import S3Manager
 
 
 def generate_gemini_content(audio):
     try:
-        vertex_model = "gemini-1.5-pro-preview-0409"
+        vertex_model = config('VERTEX_MODEL')
         model = GenerativeModel(model_name=vertex_model)
         prompt = '''
                 <instructions>
@@ -82,7 +83,7 @@ def process(class_id):
         if download_file(class_id=class_id, signed_url=signed_url):
 
             print("\n--------------------convert the mp4 file to mp3-----------------------------\n")
-            file_ops = FileOperations()
+            # file_ops = FileOperations()
             file_ops.write_audio_file(class_id=class_id)
             result = file_ops.cut_audio_file(class_id=class_id)
             print("\n--------------------read and transcribe the audio file with gemini-----------------------------\n")
@@ -94,7 +95,7 @@ def process(class_id):
                 file_ops.write_cut_transcription_file(response.text, class_id, int(output_part))
 
         print("\n--------------------improve the transcription using gpt-----------------------------\n")
-        gpt_api(class_id=class_id)
+        gpt_improve_transcript(class_id=class_id)
         print("\n--------------------add the synopsis-----------------------------\n")
 
         synopsis = db_ops.get_synopsis_from_db(class_id=class_id)

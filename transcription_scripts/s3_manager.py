@@ -14,15 +14,16 @@ class S3Manager:
                                       aws_secret_access_key=self.aws_secret_key_id
                                       )
 
-    def upload_transcript_subtitle_to_s3(self, class_id):
+    def upload_transcript_subtitle_to_s3(self, class_id, gpt_transcription=False):
         try:
 
             transcript_file_name = f"{class_id}_gemini_transcript.txt"
             improved_transcript_file_name = f"{class_id}_gemini_transcript_improved.txt"
-            local_transcript_file_path = f"{self.base_transcript_path}{class_id}/{transcript_file_name}"
             improved_local_transcript_file_path = f"{self.base_transcript_path}{class_id}/{improved_transcript_file_name}"
-            self.s3_client.upload_file(local_transcript_file_path, self.s3_bucket,
-                                       f"ai_live_query_resolution/gemini_transcripts/{transcript_file_name}")
+            if not gpt_transcription:
+                local_transcript_file_path = f"{self.base_transcript_path}{class_id}/{transcript_file_name}"
+                self.s3_client.upload_file(local_transcript_file_path, self.s3_bucket,
+                                           f"ai_live_query_resolution/gemini_transcripts/{transcript_file_name}")
             self.s3_client.upload_file(improved_local_transcript_file_path, self.s3_bucket,
                                        f"ai_live_query_resolution/gemini_improved_transcripts/{improved_transcript_file_name}")
 
@@ -54,6 +55,3 @@ class S3Manager:
             return list_of_file_path
         except Exception as e:
             print(f"Error: {e}")
-
-
-

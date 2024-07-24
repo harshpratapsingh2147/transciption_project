@@ -81,12 +81,13 @@ class FileOperations:
     #     writer = get_writer("srt", str(BASE_SUBTITLE_PATH))
     #     writer(transcript, f"{class_id}_sub")
 
-    def delete_files_from_local(self, class_id):
+    def delete_files_from_local(self, class_id, gpt_transcription=False):
         os.remove(f"{self.base_download_video_path}{class_id}.mp4")
         os.remove(f"{self.base_audio_path}{class_id}.mp3")
         # os.remove(f"{self.base_subtitle_path}{class_id}_sub.srt")
         shutil.rmtree(f"{self.base_transcript_path}{class_id}")
-        shutil.rmtree(f"{self.base_cut_transcript_path}{class_id}")
+        if not gpt_transcription:
+            shutil.rmtree(f"{self.base_cut_transcript_path}{class_id}")
         shutil.rmtree(f"{self.base_cut_audio_folder_path}{class_id}")
 
     def read_file(self, file_path):
