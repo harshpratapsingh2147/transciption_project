@@ -142,7 +142,7 @@ def vdo_cipher_process(class_id):
     class_id_url_dict = {}
     for row in rows_as_lists:
         class_id_url_dict[row[0]] = row[3]
-    print(class_id_url_dict)
+    # print(class_id_url_dict)
     url = class_id_url_dict[int(class_id)]
     download_file_from_s3_using_excel((class_id, url))
     common_process(class_id=class_id)
