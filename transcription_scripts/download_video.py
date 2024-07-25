@@ -3,6 +3,7 @@ import datetime
 import requests
 import os
 from decouple import config
+import subprocess
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = config('GOOGLE_APPLICATION_CREDENTIALS_PATH')
 
@@ -11,7 +12,7 @@ GCP_BUCKET = config('GCP_BUCKET')
 GCP_DIRECTORY = config('GCP_DIRECTORY')
 
 
-def download_file(signed_url, class_id):
+def download_file_from_gcp(signed_url, class_id):
     try:
         response = requests.get(signed_url, stream=True)
 
@@ -26,6 +27,15 @@ def download_file(signed_url, class_id):
     except Exception as err:
         print(err)
         return False
+
+
+def download_file_from_s3_using_excel(args):
+    class_id, url = args
+    # Local file path to save the downloaded video
+    local_file_path = f'{BASE_DOWNLOAD_PATH}{class_id}.mp4'
+
+    # Run the curl command
+    subprocess.run(['curl', '-o', local_file_path, url], check=True)
 
 
 def list_files_in_directory(bucket, directory_path):

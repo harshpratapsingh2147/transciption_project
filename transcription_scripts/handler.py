@@ -1,10 +1,10 @@
 import sys
 import multiprocessing
-from gemini_process_transcript import process
+from gemini_process_transcript import gcp_process
 
 
 def transcribe_video(class_id):
-    process(class_id=class_id)
+    gcp_process(class_id=class_id)
 
 
 if __name__ == "__main__":
