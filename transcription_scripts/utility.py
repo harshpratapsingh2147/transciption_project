@@ -44,7 +44,7 @@ def recursive_text_splitter(pages):
     return docs
 
 
-def embed_data(docs):
+def embed_data(docs, section):
     try:
         client = chromadb.HttpClient(host='localhost', port=8000)
 
@@ -53,6 +53,7 @@ def embed_data(docs):
         documents = []
 
         for doc in docs:
+            doc.metadata['section'] = section
             ids.append(str(uuid.uuid1()))
             metadatas.append(doc.metadata)
             documents.append(doc.page_content)

@@ -30,9 +30,11 @@ def handler():
             print(f"splitting transcription {file_name}.....")
             docs = recursive_text_splitter(pages)
             print(f"embedding splits for {file_name}.....")
-            if embed_data(docs):
+            db_ops = DBOperations()
+            section = db_ops.get_section_id(class_id=class_id)
+
+            if embed_data(docs, section=section):
                 print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
-                db_ops = DBOperations()
                 db_ops.update_transcription_status(class_id=class_id)
                 print("embedding completed............deleting file from local")
                 shutil.rmtree(f"{BASE_TRANSCRIPT_PATH}{class_id}")

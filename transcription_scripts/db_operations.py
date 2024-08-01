@@ -67,3 +67,36 @@ class DBOperations:
 
         except pymysql.MySQLError as err:
             print(err)
+
+    def get_section_id(self, class_id):
+        try:
+            conn = pymysql.connect(
+                host=self.host,
+                user=self.user,
+                passwd=self.password,
+                db=self.name,
+                connect_timeout=5
+            )
+            q = f"""SELECT section_name 
+            FROM section 
+            WHERE section_id IN ( 
+                SELECT section_id 
+                FROM classroom_lecture 
+                WHERE id = {class_id} 
+            )"""
+            cursor = conn.cursor()
+            cursor.execute(q)
+            row = cursor.fetchall()
+            conn.close()
+            return parse_synopsis(row[0][0])
+
+        except pymysql.MySQLError as err:
+            print(err)
+
+
+# if __name__ == "__main__":
+#     # List of class_ids for the videos to transcribe
+#     class_ids = sys.argv[1:]
+#     dp_ops = DBOperations()
+#     print(dp_ops.get_section_id(class_id=class_ids[0]))
+
