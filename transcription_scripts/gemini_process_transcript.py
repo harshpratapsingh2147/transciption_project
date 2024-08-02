@@ -107,7 +107,7 @@ def common_process(class_id):
     print(f"embedding splits {class_id}.....")
     db_ops = DBOperations()
     section = db_ops.get_section_id(class_id=class_id)
-    if embed_data(docs, section=section):
+    if embed_data(docs, section=section, class_id=class_id):
         print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
         db_ops.update_transcription_status(class_id=class_id)
         print(f"\n-----------------uploading files on s3 for {class_id}---------------------\n")

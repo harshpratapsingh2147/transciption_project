@@ -33,7 +33,7 @@ def handler():
             db_ops = DBOperations()
             section = db_ops.get_section_id(class_id=class_id)
 
-            if embed_data(docs, section=section):
+            if embed_data(docs, section=section, class_id=class_id):
                 print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
                 db_ops.update_transcription_status(class_id=class_id)
                 print("embedding completed............deleting file from local")
