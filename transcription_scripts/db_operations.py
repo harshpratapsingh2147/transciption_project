@@ -1,3 +1,4 @@
+import datetime
 import pymysql
 from decouple import config
 from utility import extract_id, parse_synopsis
@@ -11,7 +12,7 @@ class DBOperations:
         self.user = config('DB_USER')
         self.password = config('DB_PASS')
 
-    def update_transcription_status(self, class_id):
+    def update_transcription_status(self, class_id, status):
         try:
             conn = pymysql.connect(
                 host=self.host,
@@ -20,9 +21,17 @@ class DBOperations:
                 db=self.name,
                 connect_timeout=5
             )
-            q = "UPDATE classroom_lecture SET transcription_status = %s WHERE id = %s" % (1, class_id)
+            created_at = datetime.datetime.now()
+            updated_at = datetime.datetime.now()
+            q = """
+             INSERT INTO lecture_transcription (lecture_id, status, created_at, updated_at)
+             VALUES (%s, %s, %s, %s)
+             ON DUPLICATE KEY UPDATE
+                 status = VALUES(status),
+                 updated_at = VALUES(updated_at)
+             """
             curr = conn.cursor()
-            curr.execute(q)
+            curr.execute(q, (class_id, status, created_at, updated_at))
             conn.commit()
             conn.close()
         except pymysql.MySQLError as err:

@@ -78,8 +78,10 @@ def common_process(class_id):
     print("\n--------------------convert the mp4 file to mp3-----------------------------\n")
     file_ops.write_audio_file(class_id=class_id)
     result = file_ops.cut_audio_file(class_id=class_id)
-    print("\n--------------------read and transcribe the audio file with gemini-----------------------------\n")
+    print("\n--------------------create entry in the transcription status table-----------------------------\n")
+    db_ops.update_transcription_status(class_id=class_id, status=0)
 
+    print("\n--------------------read and transcribe the audio file with gemini-----------------------------\n")
     for res in result:
         audio = file_ops.read_mp3_file(res)
         response = generate_gemini_content(audio)
@@ -109,7 +111,7 @@ def common_process(class_id):
     section = db_ops.get_section_id(class_id=class_id)
     if embed_data(docs, section=section, class_id=class_id):
         print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
-        db_ops.update_transcription_status(class_id=class_id)
+        db_ops.update_transcription_status(class_id=class_id, status=1)
         print(f"\n-----------------uploading files on s3 for {class_id}---------------------\n")
         s3_manager = S3Manager()
         s3_manager.upload_transcript_subtitle_to_s3(class_id=class_id)

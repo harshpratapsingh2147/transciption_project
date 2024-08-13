@@ -64,6 +64,9 @@ def gpt_transcribe_audio(class_id):
     db_ops = DBOperations()
     file_name = f"{class_id}_gemini_transcript_improved.txt"
 
+    print("\n--------------------create an entry in the lecture_transcription-----------------------------\n")
+    db_ops.update_transcription_status(class_id=class_id, status=0)
+
     # Transcribe the audio
     files = file_ops.list_files_in_directory(
         directory_path=f"{BASE_CUT_AUDIO_FOLDER_PATH}{class_id}/"
@@ -92,8 +95,8 @@ def gpt_transcribe_audio(class_id):
     )
 
     print("\n--------------------load and split the content from the transcript-----------------------------\n")
-
     pages = file_ops.load_text_file(class_id=class_id)
+
     print(f"splitting transcription file {class_id}.....")
     docs = recursive_text_splitter(pages)
     print(f"embedding splits {class_id}.....")
@@ -101,7 +104,7 @@ def gpt_transcribe_audio(class_id):
     section = db_ops.get_section_id(class_id=class_id)
     if embed_data(docs, class_id=class_id, section=section):
         print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
-        db_ops.update_transcription_status(class_id=class_id)
+        db_ops.update_transcription_status(class_id=class_id, status=1)
         print(f"\n-----------------uploading files on s3 for {class_id}---------------------\n")
         s3_manager = S3Manager()
         s3_manager.upload_transcript_subtitle_to_s3(

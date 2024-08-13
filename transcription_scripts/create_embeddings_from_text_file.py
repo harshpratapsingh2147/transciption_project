@@ -35,7 +35,7 @@ def handler():
 
             if embed_data(docs, section=section, class_id=class_id):
                 print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
-                db_ops.update_transcription_status(class_id=class_id)
+                db_ops.update_transcription_status(class_id=class_id, status=1)
                 print("embedding completed............deleting file from local")
                 shutil.rmtree(f"{BASE_TRANSCRIPT_PATH}{class_id}")
     except Exception as err:
