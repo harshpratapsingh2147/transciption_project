@@ -171,4 +171,5 @@ if __name__ == "__main__":
 
     dp_ops = DBOperations()
     transcripted_list = [95583, 95592, 95606, 95613, 95623, 98409, 98413, 98456, 98459, 98463, 99464, 99516, 99524, 99528, 99557, 99560, 101234]
-    dp_ops.get_all_embed_ids(transcripted_list)
+    lecture_ids_str = ', '.join(map(str, transcripted_list))
+    dp_ops.get_all_embed_ids(lecture_ids_str)
