@@ -2,7 +2,7 @@ import datetime
 import pymysql
 from decouple import config
 from utility import extract_id, parse_synopsis
-import re
+
 
 class DBOperations:
 
@@ -102,74 +102,10 @@ class DBOperations:
         except pymysql.MySQLError as err:
             print(err)
 
-    def extract_id(self, embed_code):
-        pattern = r'id=([a-f0-9]{32})'
-        match = re.search(pattern, embed_code)
 
-        # Extract the matched value if found
-        if match:
-            video_id = match.group(1)
-            return video_id
-        else:
-            print("No match found.")
-    #
-    # def get_all_lecture_ids(self):
-    #     try:
-    #         conn = pymysql.connect(
-    #             host=self.host,
-    #             user=self.user,
-    #             passwd=self.password,
-    #             db=self.name,
-    #             connect_timeout=5
-    #         )
-    #         q = f"""
-    #         Select id, embed_code from classroom_lecture where package=5661 and status='Active'"""
-    #         cursor = conn.cursor()
-    #         cursor.execute(q)
-    #         rows = cursor.fetchall()
-    #         class_id_list = [{"id": row[0], "embed_code": self.extract_id(row[1])} for row in rows]
-    #         print(class_id_list)
-    #         print(len(class_id_list))
-    #         conn.close()
-    #         return class_id_list
-    #
-    #     except pymysql.MySQLError as err:
-    #         print(err)
-    #
-    # def find_all_vids_that_are_not_transcripted(self, transcripted_list):
-    #     class_id_list = self.get_all_lecture_ids()
-    #     non_transcripted_list = []
-    #     for id_ in class_id_list:
-    #         if id_ not in transcripted_list:
-    #             non_transcripted_list.append(id_)
-    #     print(non_transcripted_list)
-
-    def get_all_embed_ids(self, lecture_ids):
-        try:
-            conn = pymysql.connect(
-                host=self.host,
-                user=self.user,
-                passwd=self.password,
-                db=self.name,
-                connect_timeout=5
-            )
-            q = f"""Select id, embed_code from classroom_lecture where id in ({lecture_ids})"""
-
-            cursor = conn.cursor()
-            cursor.execute(q)
-            rows = cursor.fetchall()
-            result_list = [{"id": row[0], "embed_code": self.extract_id(row[1])} for row in rows]
-            conn.close()
-            print(result_list)
-
-        except pymysql.MySQLError as err:
-            print(err)
-
-
-
-if __name__ == "__main__":
-
-    dp_ops = DBOperations()
-    transcripted_list = [95583, 95592, 95606, 95613, 95623, 98409, 98413, 98456, 98459, 98463, 99464, 99516, 99524, 99528, 99557, 99560, 101234]
-    lecture_ids_str = ', '.join(map(str, transcripted_list))
-    dp_ops.get_all_embed_ids(lecture_ids_str)
+#
+# if __name__ == "__main__":
+#
+# dp_ops = DBOperations() transcripted_list = [95583, 95592, 95606, 95613, 95623, 98409, 98413, 98456, 98459, 98463,
+# 99464, 99516, 99524, 99528, 99557, 99560, 101234] lecture_ids_str = ', '.join(map(str, transcripted_list))
+# dp_ops.get_all_embed_ids(lecture_ids_str)
