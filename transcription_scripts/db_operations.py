@@ -2,7 +2,7 @@ import datetime
 import pymysql
 from decouple import config
 from utility import extract_id, parse_synopsis
-
+import sys
 
 class DBOperations:
 
@@ -102,10 +102,50 @@ class DBOperations:
         except pymysql.MySQLError as err:
             print(err)
 
+    def extract_id_from_embed_code(self, embed_code):
+        # This regex pattern captures the value of the 'id' parameter in the iframe's src URL
+        match = re.search(r'id=([a-zA-Z0-9]+)', embed_code)
+        if match:
+            return match.group(1)
+        return None
 
-#
-# if __name__ == "__main__":
-#
-# dp_ops = DBOperations() transcripted_list = [95583, 95592, 95606, 95613, 95623, 98409, 98413, 98456, 98459, 98463,
-# 99464, 99516, 99524, 99528, 99557, 99560, 101234] lecture_ids_str = ', '.join(map(str, transcripted_list))
-# dp_ops.get_all_embed_ids(lecture_ids_str)
+    def get_untranscripted_vdo_cipher_list(self, package):
+        try:
+            conn = pymysql.connect(
+                host=self.host,
+                user=self.user,
+                passwd=self.password,
+                db=self.name,
+                connect_timeout=5
+            )
+            vdo_cipher_query = f"""
+            SELECT id, embed_code FROM classroom_lecture 
+            WHERE id NOT IN (SELECT lecture_id FROM lecture_transcription WHERE status=1)
+            AND package = {package} AND status='Active' AND embed_code LIKE '%vdocipher.com%'
+            """
+            cursor = conn.cursor()
+            cursor.execute(vdo_cipher_query)
+            rows = cursor.fetchall()
+            conn.close()
+
+            # Process the data and extract IDs from embed codes
+            data = []
+            for row in rows:
+                lecture_id = row[0]
+                embed_code = row[1]
+                extracted_id = self.extract_id_from_embed_code(embed_code)
+                data.append({"lecture_id": lecture_id, "embed_code": embed_code, "extracted_id": extracted_id})
+
+            # Convert data to a DataFrame and save to an Excel file
+            df = pd.DataFrame(data)
+            df.to_excel("untranscripted_lectures.xlsx", index=False)
+
+        except pymysql.MySQLError as err:
+            print(err)
+
+
+if __name__ == "__main__":
+    package = sys.argv[1:][0]
+    print(package)
+    db_ops = DBOperations()
+    db_ops.get_untranscripted_vdo_cipher_list(package=package)
