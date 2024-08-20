@@ -4,6 +4,7 @@ from decouple import config
 from utility import extract_id, parse_synopsis
 import sys
 import re
+import pandas as pd
 
 class DBOperations:
 
