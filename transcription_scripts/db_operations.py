@@ -3,6 +3,7 @@ import pymysql
 from decouple import config
 from utility import extract_id, parse_synopsis
 import sys
+import re
 
 class DBOperations:
 
