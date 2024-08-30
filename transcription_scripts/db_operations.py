@@ -1,7 +1,6 @@
 import datetime
 import pymysql
 from decouple import config
-from utility import extract_id, parse_synopsis
 import sys
 import re
 import pandas as pd
@@ -55,6 +54,7 @@ class DBOperations:
             cursor.execute(q)
             row = cursor.fetchall()
             conn.close()
+            from utility import extract_id
             return extract_id(row[0][0])
 
         except pymysql.MySQLError as err:
@@ -74,6 +74,7 @@ class DBOperations:
             cursor.execute(q)
             row = cursor.fetchall()
             conn.close()
+            from utility import parse_synopsis
             return parse_synopsis(row[0][0])
 
         except pymysql.MySQLError as err:
@@ -99,6 +100,7 @@ class DBOperations:
             cursor.execute(q)
             row = cursor.fetchall()
             conn.close()
+            from utility import parse_synopsis
             return parse_synopsis(row[0][0])
 
         except pymysql.MySQLError as err:
@@ -156,7 +158,7 @@ class DBOperations:
                 connect_timeout=5
             )
             vdo_cipher_query = f"""
-            Select * from lecture_notes where id in ({class_id})
+            Select * from lecture_notes where lecture_id = {class_id}
             """
             cursor = conn.cursor()
             cursor.execute(vdo_cipher_query)
