@@ -146,8 +146,35 @@ class DBOperations:
             print(err)
 
 
+    def fetch_handout_file_name_from_db(self, class_id):
+        try:
+            conn = pymysql.connect(
+                host=self.host,
+                user=self.user,
+                passwd=self.password,
+                db=self.name,
+                connect_timeout=5
+            )
+            vdo_cipher_query = f"""
+            Select * from lecture_notes where id in ({class_id})
+            """
+            cursor = conn.cursor()
+            cursor.execute(vdo_cipher_query)
+            rows = cursor.fetchall()
+            print(rows)
+            conn.close()
+
+        except pymysql.MySQLError as err:
+            print(err)
+
+
+
 if __name__ == "__main__":
-    package = sys.argv[1:][0]
-    print(package)
+    class_id = sys.argv[1:][0]
     db_ops = DBOperations()
-    db_ops.get_untranscripted_vdo_cipher_list(package=package)
+    db_ops.fetch_handout_file_name_from_db(class_id=class_id)
+
+    # package = sys.argv[1:][0]
+    # print(package)
+    # db_ops = DBOperations()
+    # db_ops.get_untranscripted_vdo_cipher_list(package=package)
