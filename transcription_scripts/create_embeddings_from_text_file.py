@@ -5,6 +5,7 @@ from db_operations import DBOperations
 from utility import embed_data, recursive_text_splitter
 import os
 import shutil
+from enum_utility import Bucket
 
 
 S3_DOWNLOAD_PREFIX = config('S3_DOWNLOAD_PREFIX')
@@ -14,7 +15,7 @@ BASE_TRANSCRIPT_PATH = config('BASE_TRANSCRIPT_PATH')
 def handler():
     try:
         s3_manager = S3Manager()
-        list_of_files = s3_manager.get_all_objects(prefix=S3_DOWNLOAD_PREFIX)
+        list_of_files = s3_manager.get_all_objects(prefix=S3_DOWNLOAD_PREFIX, bucket=Bucket.RESOURCES_BUCKET.value)
         print(list_of_files)
         print(len(list_of_files))
         for file in list_of_files[1:]:
@@ -23,7 +24,7 @@ def handler():
             print(class_id)
             download_folder = f'{BASE_TRANSCRIPT_PATH}{class_id}/'
             os.makedirs(download_folder, exist_ok=True)
-            s3_manager.download_transcript_from_s3(key=file, download_path=f"{download_folder}{file_name}")
+            s3_manager.download_file_from_s3(key=file, download_path=f"{download_folder}{file_name}", bucket=Bucket.RESOURCES_BUCKET.value)
             print("\n--------------------load and split the content from the transcript-----------------------------\n")
             loader = TextLoader(f"{BASE_TRANSCRIPT_PATH}{class_id}/{file_name}")
             pages = loader.load()

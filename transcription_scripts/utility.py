@@ -1,4 +1,5 @@
 import re
+import os
 from bs4 import BeautifulSoup
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import chromadb
@@ -6,7 +7,6 @@ from decouple import config
 import uuid
 from customEmbeddings import CustomOpenAIEmbeddings
 
-BASE_TRANSCRIPT_PATH = config('BASE_TRANSCRIPT_PATH')
 api_key = config('OPEN_AI_API_KEY')
 
 

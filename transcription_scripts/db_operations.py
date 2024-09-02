@@ -158,16 +158,20 @@ class DBOperations:
                 connect_timeout=5
             )
             vdo_cipher_query = f"""
-            Select * from lecture_notes where lecture_id = {class_id}
+            Select loc from lecture_notes where lecture_id = {class_id}
             """
             cursor = conn.cursor()
             cursor.execute(vdo_cipher_query)
             rows = cursor.fetchall()
-            print(rows)
             conn.close()
+            if len(rows) > 0:
+                return rows[0][0]
+            else:
+                return False
 
         except pymysql.MySQLError as err:
             print(err)
+            return False
 
 
 

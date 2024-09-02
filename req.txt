@@ -13,5 +13,8 @@ google-cloud-aiplatform
 tiktoken
 pandas
 openpyxl
+pymupdf
+Pillow
+requests
 
 

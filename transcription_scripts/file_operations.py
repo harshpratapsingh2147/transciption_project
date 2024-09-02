@@ -70,7 +70,7 @@ class FileOperations:
         print(files)
         return files
 
-    def write_transcript_to_file(self, content, class_id, file_name):
+    def write_content_to_file(self, content, class_id, file_name):
         output_folder = f"{self.base_transcript_path}{class_id}/"
         os.makedirs(output_folder, exist_ok=True)
         print(file_name)
