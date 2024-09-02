@@ -96,15 +96,15 @@ class PDFToTextUtilityManager:
             with open(self.local_text_path, "w", encoding="utf-8") as file:
                 file.write(book_str)
 
-            # s3_upload_path = self.create_upload_path()
-            # self.s3_file_manager.upload_file_on_s3(
-            #     local_file_path=self.local_text_path,
-            #     s3_upload_path=s3_upload_path,
-            #     bucket= Bucket.RESOURCES_BUCKET.value
-            # )
+            s3_upload_path = self.create_upload_path()
+            self.s3_file_manager.upload_file_on_s3(
+                local_file_path=self.local_text_path,
+                s3_upload_path=s3_upload_path,
+                bucket= Bucket.RESOURCES_BUCKET.value
+            )
 
             print(f"processing complete for {self.s3_pdf_file_path.split("/")[-1]}")
-            # self.delete_files()
+            self.delete_files()
             return book_str
         except Exception as err:
             # print(gpt_response)

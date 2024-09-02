@@ -3,7 +3,7 @@ from moviepy.editor import *
 from decouple import config
 import shutil
 from langchain.document_loaders import TextLoader
-
+import sys
 
 class FileOperations:
 
@@ -81,14 +81,21 @@ class FileOperations:
     #     writer = get_writer("srt", str(BASE_SUBTITLE_PATH))
     #     writer(transcript, f"{class_id}_sub")
 
-    def delete_files_from_local(self, class_id, gpt_transcription=False):
-        os.remove(f"{self.base_download_video_path}{class_id}.mp4")
-        os.remove(f"{self.base_audio_path}{class_id}.mp3")
-        # os.remove(f"{self.base_subtitle_path}{class_id}_sub.srt")
-        shutil.rmtree(f"{self.base_transcript_path}{class_id}")
-        if not gpt_transcription:
+    def delete_files_from_local(self, class_id):
+        if os.path.exists(f"{self.base_download_video_path}{class_id}.mp4"):
+            os.remove(f"{self.base_download_video_path}{class_id}.mp4")
+
+        if os.path.exists(f"{self.base_audio_path}{class_id}.mp3"):
+            os.remove(f"{self.base_audio_path}{class_id}.mp3")
+
+        if os.path.exists(f"{self.base_transcript_path}{class_id}"):
+            shutil.rmtree(f"{self.base_transcript_path}{class_id}")
+
+        if os.path.exists(f"{self.base_cut_transcript_path}{class_id}"):
             shutil.rmtree(f"{self.base_cut_transcript_path}{class_id}")
-        shutil.rmtree(f"{self.base_cut_audio_folder_path}{class_id}")
+
+        if os.path.exists(f"{self.base_cut_audio_folder_path}{class_id}"):
+            shutil.rmtree(f"{self.base_cut_audio_folder_path}{class_id}")
 
     def read_file(self, file_path):
         with open(file_path, "r") as file:
@@ -98,3 +105,4 @@ class FileOperations:
         loader = TextLoader(f"{self.base_transcript_path}{class_id}/{class_id}_gemini_transcript_improved.txt")
         pages = loader.load()
         return pages
+

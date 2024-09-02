@@ -148,8 +148,7 @@ class GPTManager:
             )
             print(f"\n-----------------deleting files from local for {class_id}---------------------\n")
             file_ops.delete_files_from_local(
-                class_id=class_id,
-                gpt_transcription=True
+                class_id=class_id
             )
             print(f"\n-----------------transcription for the video {class_id} completed.---------------------\n")
 

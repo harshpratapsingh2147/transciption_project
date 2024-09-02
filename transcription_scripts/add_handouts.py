@@ -18,7 +18,7 @@ def add_handouts():
         db_ops = DBOperations()
         file_ops = FileOperations()
 
-        for file in list_of_files[1:2]:
+        for file in list_of_files[1:]:
             file_name = file.split("/")[-1]
             class_id = file_name.split("_")[0]
             print(f"--------------getting the handout file name for {class_id}--------------------")
