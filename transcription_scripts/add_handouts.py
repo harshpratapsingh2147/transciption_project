@@ -58,6 +58,8 @@ def add_handouts():
                     s3_upload_path=s3_upload_path,
                     bucket=Bucket.RESOURCES_BUCKET.value
                 )
+                print(f"--------deleting transcription file {class_id} from local----------------")
+                file_ops.delete_files_from_local(class_id=class_id)
             else:
                 print("No handout was found for lecture")
 
