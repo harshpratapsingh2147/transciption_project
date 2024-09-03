@@ -107,8 +107,6 @@ class PDFToTextUtilityManager:
             self.delete_files()
             return book_str
         except Exception as err:
-            # print(gpt_response)
-            # pass
-            print(err)
+            return err
 
 
