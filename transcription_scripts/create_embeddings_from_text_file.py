@@ -21,7 +21,7 @@ def handler():
         print(len(list_of_files))
         print("---------------------------------------------------------------------------------------------")
 
-        for file in list_of_files[1:5]:
+        for file in list_of_files[1:]:
             file_name = file.split("/")[-1]
             class_id = file_name.split("_")[0]
 
