@@ -9,7 +9,6 @@ import os
 S3_DOWNLOAD_PREFIX = config('S3_DOWNLOAD_PREFIX')
 BASE_TRANSCRIPT_PATH = config('BASE_TRANSCRIPT_PATH')
 BASE_PDF_PATH = config('BASE_PDF_PATH')
-BASE_TEXT_PATH = config('BASE_TEXT_PATH')
 
 def add_handouts():
     try:

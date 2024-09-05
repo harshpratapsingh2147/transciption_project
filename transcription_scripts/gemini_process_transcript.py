@@ -12,6 +12,11 @@ from utility import embed_data, recursive_text_splitter
 from file_operations import FileOperations
 from s3_manager import S3Manager
 from enum_utility import Bucket, Prompt, AiModels
+import os
+from pdf_to_text_utility import PDFToTextUtilityManager
+
+BASE_PDF_PATH = config('BASE_PDF_PATH')
+
 
 
 def generate_gemini_content(audio):
@@ -68,6 +73,7 @@ def common_process(class_id):
     db_ops = DBOperations()
     file_ops = FileOperations()
     gpt_manager = GPTManager()
+    s3_manager = S3Manager()
 
     print("\n--------------------convert the mp4 file to mp3-----------------------------\n")
     file_ops.write_audio_file(class_id=class_id)
@@ -95,6 +101,28 @@ def common_process(class_id):
         file_name=file_name
     )
 
+    print(f"--------------getting the handout file name for {class_id}--------------------")
+    handout_loc = db_ops.fetch_handout_file_name_from_db(class_id=class_id)
+    if handout_loc:
+        handout_download_folder = f"{BASE_PDF_PATH}"
+        os.makedirs(handout_download_folder, exist_ok=True)
+        print(f"-----------downloading the handout file for {class_id}--------------------")
+        s3_manager.download_file_from_s3(
+            key=f"classroom/handouts/{handout_loc}",
+            download_path=f"{handout_download_folder}{handout_loc}",
+            bucket=Bucket.ASSETS_BUCKET.value
+        )
+
+        print(f"--------converting the handout pdf to text for {class_id}----------------")
+        utility_manager = PDFToTextUtilityManager(s3_pdf_file_path=f"classroom/handouts/{handout_loc}")
+        handout_content = utility_manager.pdf_processing()
+        print(f"--------writing content to transcript file for {class_id}----------------")
+        file_ops.write_content_to_file(
+            content=f"\n Class Notes: \n {handout_content}",
+            class_id=class_id,
+            file_name=file_name
+        )
+
     print("\n--------------------load and split the content from the transcript-----------------------------\n")
 
     pages = file_ops.load_text_file(class_id=class_id)
@@ -107,7 +135,6 @@ def common_process(class_id):
         print(f"\n-----------------updating transcription status in db for {class_id}---------------------\n")
         db_ops.update_transcription_status(class_id=class_id, status=1)
         print(f"\n-----------------uploading files on s3 for {class_id}---------------------\n")
-        s3_manager = S3Manager()
         s3_manager.upload_transcript_subtitle_to_s3(class_id=class_id, bucket=Bucket.RESOURCES_BUCKET.value)
         print(f"\n-----------------deleting files from local for {class_id}---------------------\n")
         file_ops.delete_files_from_local(class_id=class_id)
