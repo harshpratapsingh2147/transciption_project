@@ -6,10 +6,13 @@ from db_operations import DBOperations
 from utility import embed_data, recursive_text_splitter
 import requests
 from enum_utility import Prompt, Bucket, AiModels
+import os
+import sys
 
 BASE_CUT_AUDIO_FOLDER_PATH = config('BASE_CUT_AUDIO_FOLDER_PATH')
 BASE_TRANSCRIPT_PATH = config('BASE_TRANSCRIPT_PATH')
 BASE_CUT_TRANSCRIPT_FOLDER_PATH = config('BASE_CUT_TRANSCRIPT_FOLDER_PATH')
+BASE_PDF_PATH = config('BASE_PDF_PATH')
 
 
 class GPTManager:
@@ -96,6 +99,7 @@ class GPTManager:
         client = OpenAI(api_key=self.api_key)
         file_ops = FileOperations()
         db_ops = DBOperations()
+        s3_manager = S3Manager()
         file_name = f"{class_id}_gemini_transcript_improved.txt"
 
         print("\n--------------------create an entry in the lecture_transcription-----------------------------\n")
@@ -120,13 +124,36 @@ class GPTManager:
                 file_name=file_name
             )
 
+        print("-----------------adding the synopsis from the database------------------------")
         synopsis = db_ops.get_synopsis_from_db(class_id=class_id)
-
         file_ops.write_content_to_file(
             content=f"\n Synopsis: \n {synopsis}",
             class_id=class_id,
             file_name=file_name
         )
+
+        print(f"--------------getting the handout file name for {class_id}--------------------")
+        handout_loc = db_ops.fetch_handout_file_name_from_db(class_id=class_id)
+        if handout_loc:
+            handout_download_folder = f"{BASE_PDF_PATH}"
+            os.makedirs(handout_download_folder, exist_ok=True)
+            print(f"-----------downloading the handout file for {class_id}--------------------")
+            s3_manager.download_file_from_s3(
+                key=f"classroom/handouts/{handout_loc}",
+                download_path=f"{handout_download_folder}{handout_loc}",
+                bucket=Bucket.ASSETS_BUCKET.value
+            )
+
+            print(f"--------converting the handout pdf to text for {class_id}----------------")
+            from pdf_to_text_utility import PDFToTextUtilityManager
+            utility_manager = PDFToTextUtilityManager(s3_pdf_file_path=f"classroom/handouts/{handout_loc}")
+            handout_content = utility_manager.pdf_processing()
+            print(f"--------writing content to transcript file for {class_id}----------------")
+            file_ops.write_content_to_file(
+                content=f"\n Class Notes: \n {handout_content}",
+                class_id=class_id,
+                file_name=file_name
+            )
 
         print("\n--------------------load and split the content from the transcript-----------------------------\n")
         pages = file_ops.load_text_file(class_id=class_id)
@@ -153,7 +180,8 @@ class GPTManager:
             print(f"\n-----------------transcription for the video {class_id} completed.---------------------\n")
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
     # List of class_ids for the videos to transcribe
-    # class_id = sys.argv[1:][0]
-    # gpt_transcribe_audio(class_id=class_id)
+    class_id = sys.argv[1:][0]
+    gpt_manager = GPTManager()
+    gpt_manager.gpt_transcribe_audio(class_id=class_id)
